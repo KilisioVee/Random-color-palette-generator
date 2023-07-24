@@ -39,17 +39,20 @@ class MyHomePage extends StatefulWidget {
 class _DemoPageState extends State<MyHomePage> {
   List<Color> colorList = [Colors.lightBlue,Colors.black,Colors.white,Colors.red];
   var colorC;
+  Color mix=Colors.green;
   @override
   void initState() {
     super.initState();
-    Color mix= ColorUtils.mixColors(colorList);
-    print(mix.toString());
+
     ShakeDetector detector = ShakeDetector.autoStart(
       onPhoneShake: () {
+      setState(() {
+          mix= ColorUtils.mixColors(colorList);
 
+        });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("shaked"),
+           SnackBar(
+            content: Text(mix.toString()!=null?mix.toString():"shaked"),
           ),
         );
         // Do stuff on phone shake
@@ -63,7 +66,13 @@ class _DemoPageState extends State<MyHomePage> {
     // To close: detector.stopListening();
     // ShakeDetector.waitForStart() waits for user to call detector.startListening();
   }
+void mixColors(){
+  setState(() {
+    mix= ColorUtils.mixColors(colorList);
 
+  });
+
+}
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -81,34 +90,45 @@ class _DemoPageState extends State<MyHomePage> {
           ),
           body: colorList.isEmpty
               ? const Center(child: const Text('You don\'t have any colors'))
-              :  GridView.count(
-              crossAxisCount: 2,
-              crossAxisSpacing: 4.0,
-              mainAxisSpacing: 8.0,
-              children: List.generate(colorList.length, (index) {
+              : SingleChildScrollView(
+            child: Column(
 
-                  return
-                    Center(
-                      child:  InkWell(
-                        onTap: () {
-                    /* Navigator.push(context, MaterialPageRoute(builder: (context) {
+              children: [
+                Container(
+                  height: 400,
+                  child: GridView.count(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 4.0,
+                      mainAxisSpacing: 5.0,
+                      children: List.generate(colorList.length, (index) {
+
+                        return
+                          Center(
+                            child:  InkWell(
+                              onTap: () {
+                                /* Navigator.push(context, MaterialPageRoute(builder: (context) {
           return AddTodoScreen(
             todo: todo,
           );
         }));*/
 
-                  },
-                child: Padding(
-                  padding: const EdgeInsets.all(40.0),
-                  child: Card(
-                  color: colorList[index],
-                  child: Center(child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(40.0),
+
+                                child:
+                                Card(
+elevation: 2,
+                                    color: colorList[index],
+                                    child: Center(child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: <Widget>[
 
 
 
-                //  Expanded(child: Text((colorList[index]..toString() ) )),
+                                          //  Expanded(child: Text((colorList[index]..toString() ) )),
 
 
 
@@ -116,19 +136,93 @@ class _DemoPageState extends State<MyHomePage> {
 
 
 
-                  ]
-                  ),
-                  )
+                                        ]
+                                    ),
+                                    )
+                                ),
+                              ),
+                            ),
+                          );
+
+
+
+
+                      }
+                      )),
+                ),
+                Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 5),
+
+                    child: Container(
+                      width: 300,
+                      child: ButtonTheme(
+                        height: 40,
+
+
+                        child: ElevatedButton(
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(Colors.blueGrey),
+                                padding:
+                                MaterialStateProperty.all(const EdgeInsets.all(20)),
+                                textStyle: MaterialStateProperty.all(
+                                    const TextStyle(fontSize: 14, color: Colors.white))),
+                            child: Text('Generate Palette ', style: TextStyle(color: Colors.white, fontSize: 15)),
+
+                            onPressed: () =>
+                            {
+                            mixColors()
+                            }
+
+
+                        ),
+                      ),
+                    ),
                   ),
                 ),
+
+                Container(
+                  child: Center(child: Text("Result",style: TextStyle(color: Colors.white, fontSize: 15))),
+                  height: 120,
+                  width:300,
+                  color: mix,
+                  padding: EdgeInsets.all(10),
+                  margin: EdgeInsets.all(5),
                 ),
-                    );
+                Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 5),
+
+                    child: Container(
+                      width: 300,
+                      child: ButtonTheme(
+                        height: 40,
 
 
+                        child: ElevatedButton(
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(Colors.grey),
+                                padding:
+                                MaterialStateProperty.all(const EdgeInsets.all(20)),
+                                textStyle: MaterialStateProperty.all(
+                                    const TextStyle(fontSize: 14, color: Colors.white))),
+                            child: Text('Click to copy to clip board ', style: TextStyle(color: Colors.white, fontSize: 15)),
+
+                            onPressed: () =>
+                            {
+                              mixColors()
+                            }
 
 
-              }
-              ))
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+
 
 
       ),
