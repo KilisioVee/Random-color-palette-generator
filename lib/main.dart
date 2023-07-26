@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_color_utils/flutter_color_utils.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:shake/shake.dart';
 
 void main() {
@@ -108,37 +110,62 @@ void mixColors(){
                           Center(
                             child:  InkWell(
                               onTap: () {
-                                /* Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return AddTodoScreen(
-            todo: todo,
-          );
-        }));*/
+                                ColorPicker(
+                                  pickerColor: colorList[index], //default color
+                                  onColorChanged: (Color color){
+                                    setState(() {
+                                      colorList[index]=color;
+                                    });
+
+                                    print(color);
+                                  },
+                                );
 
                               },
                               child: Padding(
                                 padding: const EdgeInsets.all(40.0),
 
                                 child:
-                                Card(
+                                InkWell(
+                                  onTap: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context){
+                                          return AlertDialog(
+                                            title: Text('Pick a color!'),
+                                            content: SingleChildScrollView(
+                                              child: ColorPicker(
+                                                pickerColor:  colorList[index], //default color
+                                                onColorChanged: (Color color){ //on color picked
+                                                  setState(() {
+                                                    colorList[index] = color;
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                            actions: <Widget>[
+                                              ElevatedButton(
+                                                child: const Text('DONE'),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop(); //dismiss the color picker
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        }
+                                    );
+
+                                  },
+                                  child: Card(
 elevation: 2,
-                                    color: colorList[index],
-                                    child: Center(child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: <Widget>[
-
-
-
-                                          //  Expanded(child: Text((colorList[index]..toString() ) )),
-
-
-
-
-
-
-
-                                        ]
-                                    ),
-                                    )
+                                      color: colorList[index],
+                                      child: Center(child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: <Widget>[
+ ]
+                                      ),
+                                      )
+                                  ),
                                 ),
                               ),
                             ),
@@ -210,7 +237,11 @@ elevation: 2,
 
                             onPressed: () =>
                             {
-                              mixColors()
+                            Clipboard.setData(new ClipboardData(text: mix.toString()))
+                                .then((_) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(mix.toString()+' Copied to your clipboard !')));
+                            })
                             }
 
 
